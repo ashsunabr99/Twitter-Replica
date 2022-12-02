@@ -11,8 +11,7 @@
 ## Commands to run the program
 - Compile all the .erl files in the zip folder (engine, user, test, server). 
 - Open one erl shell and run the engine by typing “test:delegate({})” and then enter your IP address.
-- Open a second erl shell and run the client simulation by typing “test:delegate({50,49})” where the first parameter represents the number of users you want to simulate for and the second parameter represents the maximum number of followers a user can have, which will be 1 less than total users at max.
-- Based on the simulation results, we’ve noted down observations in the table and constructed graphs for the same. 
+- Open a second erl shell and run the client simulation by typing “test:delegate({50,49,20})” where the first parameter represents the number of users you want to simulate for and the second parameter represents the maximum number of followers a user can have, which will be 1 less than total users at max. The third parameter represents the percentage of users you want to participate in the disconnect/reconnect functionality. 
 - In order to test each functionality manually, the user can refer to the screenshots attached in the features section to see how to test for each feature manually apart from the simulation.
 
 ## Architecture
@@ -52,10 +51,14 @@
 - user.erl: This file contains details about a particular client participant, which corresponds to a single twitter user. This includes its user Id data, which is saved as a string supplied to it upon program startup. The primary registry ETS table, which maintains track of different actors, performs the core logic of preserving process state.
 - server.erl: To manually test for functions and features of the application, use this file and refer to features implemented section to see how to check for each feature. Start server by typing “server:start()” and then manually test the features implemented.
 
-- Zipf distribution - In accordance with the specifications, we were required to model a Zipf distribution based on the subscriber count. By requesting an extra variable from the client, maxSubscribers, which specifies the most subscribers a client may have throughout the trial, the Zipf distribution was calculated. The user with the second-highest subscriber count had a total subscriber count of maxSubscribers/2, the user with the next-highest subscriber count had a total subscriber count of maxSubscribers/3, and so on. This was done by employing the equation noToSubscribe = round(Float.floor(totalSubscribers/(noOfClients-count+1))) - 1, where 'count' is the userId of a client, to determine the amount of peers a person should register to in order to ensure zipf distribution.
+- Zipf distribution : In accordance with the specifications, we were required to model a Zipf distribution based on the subscriber count. By requesting an extra variable from the client, maxSubscribers, which specifies the most subscribers a client may have throughout the trial, the Zipf distribution was calculated. The user with the second-highest subscriber count had a total subscriber count of maxSubscribers/2, the user with the next-highest subscriber count had a total subscriber count of maxSubscribers/3, and so on. This was done by employing the equation noToSubscribe = round(Float.floor(totalSubscribers/(noOfClients-count+1))) - 1, where 'count' is the userId of a client, to determine the amount of peers a person should register to in order to ensure zipf distribution.
+
+- Periods of live connection and disconnection for users : Disconnect clients, the third parameter used by the program to simulate times of live connection and disengagement, collects the proportion of clients who disconnect. The client's simulation console outputs the performance metrics at the conclusion if the disconnectClients> parameter is set to 0. If not, it outputs the statistics and keeps simulating recurrent live connection and disconnection times.
+Every client is required to choose a random tweet from one of its subscribers and rebroadcast it to its own subscribers in order to manage retweets. As with the original Twitter, a "-RT" is added to the end of a retweet to distinguish it from regular tweets.
+By data transmission to the server and showing the list of tweets acquired on the user end, all queries relating to tweets that were linked to, tweets with particular hashtags, and tweets in which the user is referenced (my mentions) were effectively handled. A person who is online will receive the tweets via live view in real time. In order to determine which user's live view is being updated, User ID is prefixed to this output.
 
 ## Observations and graphs for simulation
-- Testing the simulation for 3 users with maximum of 2 followers each
+- Testing the simulation for 3 users with maximum of 2 followers each and disconnect and reconnect users parameter set to 0 to obtain statistics
 - User Live View:
 <img width="706" alt="Screenshot 2022-12-01 at 7 59 13 PM" src="https://user-images.githubusercontent.com/59756917/205191567-e7c23d78-7158-420e-a9b0-fa7dc32aefa4.png">
 <img width="705" alt="Screenshot 2022-12-01 at 7 59 25 PM" src="https://user-images.githubusercontent.com/59756917/205191577-68d8e98f-4990-4a07-aebb-b53b9afc6406.png">
@@ -64,6 +67,19 @@
 
 <img width="712" alt="Screenshot 2022-12-01 at 7 59 37 PM" src="https://user-images.githubusercontent.com/59756917/205191637-669ceb03-c5b8-448b-984d-6d71d56c0731.png">
 <img width="709" alt="Screenshot 2022-12-01 at 7 59 48 PM" src="https://user-images.githubusercontent.com/59756917/205191658-a1ce9f25-fb58-4702-8752-ae8e7185469b.png">
+
+- User Live View for testing reconnect and disconnect of user nodes: Testing with 3 users with maximum of 2 followers each and having 50% disconnects and reconnects in between
+
+
+<img width="653" alt="Screenshot 2022-12-01 at 9 11 46 PM" src="https://user-images.githubusercontent.com/59756917/205199163-12d0365d-d434-41ea-bf45-95db364d8f85.png">
+
+<img width="656" alt="Screenshot 2022-12-01 at 9 11 33 PM" src="https://user-images.githubusercontent.com/59756917/205199098-4df904cf-48a6-4621-b80b-3ba7ac95d6c4.png">
+
+- Engine View for testing reconnect and disconnect of user nodes: Testing with 3 users with maximum of 2 followers each and having 50% disconnects and reconnects in between
+
+<img width="679" alt="Screenshot 2022-12-01 at 9 13 26 PM" src="https://user-images.githubusercontent.com/59756917/205199300-f23eeb93-b032-4c58-9aec-710977b8fd75.png">
+<img width="675" alt="Screenshot 2022-12-01 at 9 13 43 PM" src="https://user-images.githubusercontent.com/59756917/205199314-8dc64e44-abd1-4487-8c07-6e30b5ae7ae6.png">
+
 
 ## Tabular Results and Graphs
 <img width="754" alt="Screenshot 2022-12-01 at 4 16 38 PM" src="https://user-images.githubusercontent.com/59756917/205191720-e839757b-bf32-41f7-9591-994455057bb9.png">
